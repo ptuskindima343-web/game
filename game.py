@@ -124,7 +124,6 @@ class MenuView(arcade.View):
     def __init__(self):
         super().__init__()
         self.background_color = arcade.color.BLACK  # Фон для меню
-        arcade.load_font("C:/Users/User/Desktop/assets/Kenney Future Narrow.ttf")
 
         self.manager = UIManager()
         self.manager.enable()
@@ -173,10 +172,10 @@ class Bullet(arcade.Sprite):
                  speed=800, damage=50, owner="player"):
         super().__init__()
         if owner == "player":
-            self.texture = arcade.load_texture("C:/Users/User/Desktop/assets/laser_2.png")
+            self.texture = arcade.load_texture("laser_2.png")
             self.scale = 0.2
         else:
-            self.texture = arcade.load_texture("C:/Users/User/Desktop/assets/laser_1.png")
+            self.texture = arcade.load_texture("laser_1.png")
             self.scale = 0.4
 
         self.center_x = start_x
@@ -208,7 +207,7 @@ class Enemy(arcade.Sprite):
         super().__init__()
         self.game_view = game_view
         self.health = 100
-        self.texture = arcade.load_texture("C:/Users/User/Desktop/assets/ufoGreen.png")
+        self.texture = arcade.load_texture("ufoGreen.png")
         self.scale = 1.5
         self.pulse_direction = 10
         self.speed = 1.5
@@ -300,7 +299,7 @@ class Enemy(arcade.Sprite):
 class Key(arcade.Sprite):
     def __init__(self):
         super().__init__()
-        self.texture = arcade.load_texture("C:/Users/User/Desktop/assets/hud_keyGreen.png")
+        self.texture = arcade.load_texture("hud_keyGreen.png")
         self.scale = 2
         self.center_x = 100
         self.center_y = 900
@@ -312,13 +311,13 @@ class Loot(arcade.Sprite):
         self.game_w = game_w
         self.name = name
         if self.name == 'heal':
-            self.texture = arcade.load_texture("C:/Users/User/Desktop/assets/hud_heartFull.png")
+            self.texture = arcade.load_texture("hud_heartFull.png")
             self.center_x = x
             self.center_y = y
             self.scale = 0.5
 
         if self.name == 'bomb':
-            self.texture = arcade.load_texture("C:/Users/User/Desktop/assets/bomb.png")
+            self.texture = arcade.load_texture("bomb.png")
             self.center_x = x
             self.center_y = y
             self.scale = 1
@@ -339,7 +338,7 @@ class Bomb(arcade.Sprite):
     def __init__(self, start_x, start_y, target_x, target_y, game_w,
                  speed=300, damage=500):
         super().__init__()
-        self.texture = arcade.load_texture("C:/Users/User/Desktop/assets/bomb.png")
+        self.texture = arcade.load_texture("bomb.png")
         self.scale = 0.5
         self.game_w = game_w
         self.center_x = start_x
@@ -465,7 +464,7 @@ class GameView(arcade.View):
         self.collision_list.use_spatial_hashing = True
         self.collision_list.enable_spatial_hashing()
         # --- Создаём игрока ---
-        self.player_sprite = arcade.Sprite("C:/Users/User/Desktop/assets/p1_stand.png",
+        self.player_sprite = arcade.Sprite("p1_stand.png",
                                            0.5)
 
         self.world_width = int(tile_map.width * tile_map.tile_width * TILE_SCALING)
