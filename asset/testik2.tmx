@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="40" height="40" tilewidth="70" tileheight="70" infinite="0" nextlayerid="8" nextobjectid="1">
+ <tileset firstgid="1" source="hjthrtjyt.tsx"/>
+ <layer id="7" name="walls" width="40" height="40">
+  <data encoding="base64" compression="zlib">
+   eJzllkESgCAIRT2Tt7D7H6hNK0dC4CNQiz/T5BffAEa9tdaT62K04/HQim88kvJRHm7v2/rMN4jnDHxzzqh3UfX9Ex/qPiH7b4dPEwd1fz3yWuX7l0ma/HnVD1VfFN8qPyf7rxqftTZV+bTnIHg4vr7wevWfhs8jL9o4FecHtx49U07XEFFfC5/lH1fCp/VRfLt9781n8UnvRxRf9vxp441Jb74ovp292fmi6kvFQ82LCrNIEpPzfoVP4qvEZz0/Ax83ByP5UPoaX2bdo+Cs6A==
+  </data>
+ </layer>
+ <layer id="4" name="chests" width="40" height="40">
+  <data encoding="base64" compression="zlib">
+   eJztzkEJAAAIBLDLav8QwmUQ/GwJlgBX5jsAAAAAAEAtZtgAYw==
+  </data>
+ </layer>
+ <layer id="6" name="barrel" width="40" height="40">
+  <data encoding="base64" compression="zlib">
+   eJzt1jEKACAMQ1FP3PuPToIIIh20Cf4H7qk00NYAAMBOVAcAhP3WD/V5s/lezRPTA+Dv1GW1rqvlGdZcLjmrue0f7lO/MxTyqf4NfCnsdUYH+TQLLQ==
+  </data>
+ </layer>
+ <layer id="2" name="exit" width="40" height="40">
+  <data encoding="base64" compression="zlib">
+   eJztzqENADAMBLFsn7VLgkJLXq0tHb8qftJTol6l8Xcv+Q0AAAAAeMsBHegIcQ==
+  </data>
+ </layer>
+ <layer id="5" name="doors" width="40" height="40">
+  <data encoding="base64" compression="zlib">
+   eJzt1bENADAIA0F2Zf8daNOlCQIpd5L77xwBu+V0wIU+AACgQx4DgN/4QV4ovGYDfA==
+  </data>
+ </layer>
+ <layer id="3" name="enemy" width="40" height="40">
+  <data encoding="base64" compression="zlib">
+   eJztl1kKACEMQz2Q9z/f/IsMVdsmXR4IomKbuKBj1GNe9mnEXQsT7Pk1uWHff+z5SZDkHFEXAk2fpqBuEUvSbhXPOi6SVZO3556caMjswymvmj3vhgaD9nn5u5eirH2UPBG0Nw0SjbfAzVy78RXOwqtHWfDWhf4rZV1Hdqr7vtMf2ZMPNxEK1Q==
+  </data>
+ </layer>
+ <layer id="1" name="collision" width="40" height="40" visible="0">
+  <data encoding="base64" compression="zlib">
+   eJztlUESxSAIQ72G979o9x0swQRF/2fGRTUNr1akt9Z68eEFoskIJd9I4737tX4L3674VT6VZ1b9zp5FS7/yfqnOF43dfcHrFer6UO/zaj5rfzy98vydxsf+m1P5ZvMoeN7PI5ZuzEX92fV//+ACvb93D/U3K72y+Rj/CJ/6DkTPfTYfo4vWxy6+1XlRHctn7S/SL0dzI38kZnMw767iQ/0sTXa9Mf3ihF4U8fS0t/BFdCfxsfkr8Hl9EM2L6iJ8qriNr/J4AARDI/E=
+  </data>
+ </layer>
+</map>
