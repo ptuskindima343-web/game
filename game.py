@@ -13,7 +13,7 @@ SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 720
 
 RANDOM_LOOT = ['heal', 'bomb']
-CHANCE = [70, 30]
+CHANCE = [90, 10]
 
 SPARK_TEX = [
     arcade.make_soft_circle_texture(12, arcade.color.NEON_GREEN),
@@ -124,6 +124,104 @@ class MenuView(arcade.View):
     def __init__(self):
         super().__init__()
         self.background_color = arcade.color.BLACK  # Фон для меню
+        self.emitters = []
+        self.timer = 0
+        self.sound = arcade.load_sound("ruskerdax_-_savage_ambush.mp3")
+        BG_BLACK = (0, 0, 0)
+        PURE_NEON = (57, 255, 20)
+        DARK_NEON = (20, 100, 10)
+        GLOW_WHITE = (200, 255, 200)
+
+        self.neon_on_black = {
+            "normal": arcade.gui.UIFlatButton.UIStyle(
+                bg=BG_BLACK,
+                font_color=PURE_NEON,
+                border=DARK_NEON,
+                border_width=1
+            ),
+            "hover": arcade.gui.UIFlatButton.UIStyle(
+                bg=(10, 30, 10),
+                font_color=GLOW_WHITE,
+                border=PURE_NEON,
+                border_width=2
+            ),
+            "press": arcade.gui.UIFlatButton.UIStyle(
+                bg=PURE_NEON,
+                font_color=BG_BLACK,
+            )
+        }
+
+        self.manager = UIManager()
+        self.manager.enable()
+
+        self.anchor_layout = UIAnchorLayout()  # Центрирует виджеты
+        self.box_layout = UIBoxLayout(vertical=True, space_between=10)
+
+        self.setup_widgets()
+
+        self.anchor_layout.add(self.box_layout)  # Box в anchor
+        self.manager.add(self.anchor_layout)
+
+    def on_draw(self):
+        self.clear()
+        self.manager.draw()
+        for e in self.emitters:
+            e.draw()
+
+    def on_update(self, dt):
+        self.timer += dt
+        if self.timer > 0.2:
+            self.emitters.append(make_explosion(random.randint(50, 1870), random.randint(50, 1030), count=130))
+            self.emitters.append(make_explosion(random.randint(50, 1870), random.randint(50, 1030), count=130))
+            self.timer = 0
+        emitters_copy = self.emitters.copy()  # Защищаемся от мутаций списка
+        for e in emitters_copy:
+            e.update(dt)
+        for e in emitters_copy:
+            if e.can_reap():  # Готов к уборке?
+                self.emitters.remove(e)
+
+    def setup_widgets(self):
+        # Здесь добавим ВСЕ виджеты — по порядку!
+        label = UILabel(text="Machine Never Cry",
+                        font_name='Bahnschrift',
+                        font_size=150,
+                        text_color=arcade.color.NEON_GREEN,
+                        align="center")
+        self.box_layout.add(label)
+
+        flat_button = UIFlatButton(text="ИГРАТЬ", width=700, height=150, style=self.neon_on_black)
+        flat_button.on_click = self.switch
+        self.box_layout.add(flat_button)
+
+        button = UIFlatButton(text="ОБУЧЕНИЕ", width=700, height=150, style=self.neon_on_black)
+        button.on_click = self.switch_2
+        self.box_layout.add(button)
+
+    def switch(self, event):
+        self.manager.disable()
+        game_view = GameView()  # Создаём игровой вид
+        self.window.show_view(game_view)  # Переключаем
+
+    def switch_2(self, event):
+        self.manager.disable()
+        guide = Guide()
+        self.window.show_view(guide)
+
+    def on_show_view(self):
+        self.backgound_player = self.sound.play(loop=True, volume=0.4)
+
+    def on_hide_view(self):
+        arcade.stop_sound(self.backgound_player)
+
+    def on_mouse_press(self, x, y, button, modifiers):
+        pass
+
+
+class Guide(arcade.View):
+    def __init__(self):
+        super().__init__()
+        self.background_color = arcade.color.BLACK  # Фон для мен
 
         self.manager = UIManager()
         self.manager.enable()
@@ -142,26 +240,31 @@ class MenuView(arcade.View):
 
     def setup_widgets(self):
         # Здесь добавим ВСЕ виджеты — по порядку!
-        label = UILabel(text="ИГРА",
+        label = UILabel(
+            text="W,A,S,D передвижение персонажа, ЛЕВАЯ КНОПКА МЫШИ стрельба, ПРАВАЯ КНОПКА МЫШИ бросок бомбы",
+            font_name='Bahnschrift',
+            font_size=20,
+            text_color=arcade.color.NEON_GREEN,
+            align="center")
+        self.box_layout.add(label)
+        label = UILabel(text="КЛАВИША V включает след за пресонажем",
                         font_name='Bahnschrift',
-                        font_size=100,
-                        text_color=arcade.color.WHITE,
-                        width=300,
+                        font_size=25,
+                        text_color=arcade.color.NEON_GREEN,
+                        align="center")
+        self.box_layout.add(label)
+        label = UILabel(text="ЧТОБЫ ВЕРНУТЬСЯ В МЕНЮ НАЖМИТЕ ПРОБЕЛ",
+                        font_name='Bahnschrift',
+                        font_size=30,
+                        text_color=arcade.color.NEON_GREEN,
                         align="center")
         self.box_layout.add(label)
 
-        flat_button = UIFlatButton(text="ИГРАТЬ", width=400, height=80)
-        flat_button.style['normal'].fill_color = arcade.color.LIGHT_GREEN
-        flat_button.style['normal'].fill_color = arcade.color.GREEN
-        flat_button.style['normal'].font_color = arcade.color.BLACK
-        flat_button.style['normal'].border_color = arcade.color.NEON_GREEN
-        flat_button.style['normal'].border_width = 2
-        flat_button.on_click = self.switch
-        self.box_layout.add(flat_button)
-
-    def switch(self, event):
-        game_view = GameView()  # Создаём игровой вид
-        self.window.show_view(game_view)  # Переключаем
+    def on_key_press(self, key, modifiers):
+        if key == arcade.key.SPACE:
+            self.manager.disable()
+            menu_view = MenuView()  # Создаём игровой вид
+            self.window.show_view(menu_view)  # Переключаем
 
     def on_mouse_press(self, x, y, button, modifiers):
         pass
@@ -269,7 +372,6 @@ class Enemy(arcade.Sprite):
             self.vision_timer = 0
             if distance < 500:  # Радиус обнаружения
                 # 2. Проверяем, нет ли стен между центром врага и центром игрока
-                # Используем встроенную функцию arcade
                 self.can_see = arcade.has_line_of_sight(
                     self.player.position,
                     self.position,
@@ -404,6 +506,8 @@ class Booms(arcade.Sprite):
         self.scale = 1
         self.game_w = game
         self.bomb = bomb
+        self.sound = arcade.load_sound("8bit_bomb_explosion.wav")
+        self.sound.play()
 
     def update(self, delta_time):
         self.width += 18
@@ -424,14 +528,24 @@ class GameView(arcade.View):
     def __init__(self):
         super().__init__()
         # Здесь спрайты, физика
-        self.player_speed = 300
-        self.player_hp = 100000
+        self.player_speed = 6
+        self.player_hp = 1000
         self.count_bomb = 0
         self.keys_pressed = set()
         self.close = True
         self.emitters = []
         self.fountain = None
         self.trail = None
+        self.level_number = 1
+        self.shot_sound = arcade.load_sound("gunfire_sfx.wav")
+        self.enemy_dead = arcade.load_sound('explosion (1).wav')
+        self.sound = arcade.load_sound('ruskerdax_-_savage_ambush.mp3')
+        self.manager = UIManager()
+        self.anchor_layout = UIAnchorLayout()
+
+        self.setup_widgets()
+
+        self.manager.add(self.anchor_layout)
 
         self.world_camera = arcade.camera.Camera2D()  # Камера для игрового мира
         self.gui_camera = arcade.camera.Camera2D()
@@ -448,8 +562,15 @@ class GameView(arcade.View):
         self.bomb_list = arcade.SpriteList()
         self.boom_list = arcade.SpriteList()
 
+        self.player_sprite = arcade.Sprite("p1_stand.png",
+                                           0.5)
+        self.player_list.append(self.player_sprite)
+
+        self.setup()
+
+    def setup(self):
         # ===== ВОЛШЕБСТВО ЗАГРУЗКИ КАРТЫ! (Почти без магии.) =====
-        map_name = "testik.tmx"
+        map_name = f"testik{self.level_number}.tmx"
         tile_map = arcade.load_tilemap(map_name, scaling=TILE_SCALING)
 
         # --- Достаём слои из карты как спрайт-листы ---
@@ -458,22 +579,17 @@ class GameView(arcade.View):
         self.chests_list = tile_map.sprite_lists["chests"]
         self.doors_list = tile_map.sprite_lists["doors"]
         self.barrel_list = tile_map.sprite_lists["barrel"]
-        # Слой "exit" (выходы с уровня) — красота!
-        # self.exit_list = tile_map.sprite_lists["exit"]
+        self.exit_list = tile_map.sprite_lists["exit"]
         self.collision_list = tile_map.sprite_lists["collision"]
         self.collision_list.use_spatial_hashing = True
         self.collision_list.enable_spatial_hashing()
-        # --- Создаём игрока ---
-        self.player_sprite = arcade.Sprite("p1_stand.png",
-                                           0.5)
 
         self.world_width = int(tile_map.width * tile_map.tile_width * TILE_SCALING)
         self.world_height = int(tile_map.height * tile_map.tile_height * TILE_SCALING)
 
-        # Ставим игрока куда-нибудь на землю (посмотрите в Tiled, где у вас земля!)
-        self.player_sprite.center_x = 128  # Примерные координаты
-        self.player_sprite.center_y = 256  # Примерные координаты
-        self.player_list.append(self.player_sprite)
+        # Ставим игрока куда-нибудь на землю
+        self.player_sprite.center_x = 128
+        self.player_sprite.center_y = 128
 
         # --- Физический движок ---
         # Используем PhysicsEngineSimple, который знаем и любим
@@ -481,13 +597,14 @@ class GameView(arcade.View):
             self.player_sprite, [self.collision_list, self.doors_list]
         )
 
-        for enemy_sprite in enemy_list_0:
+        for enemy_sprite in enemy_list_0[:]:
             enemy = Enemy(
                 game_view=self,
                 player=self.player_sprite,
                 x=enemy_sprite.center_x,
                 y=enemy_sprite.center_y
             )
+            enemy_sprite.remove_from_sprite_lists()
             self.enemy_list.append(enemy)
 
     def on_resize(self, width: int, height: int):
@@ -495,13 +612,39 @@ class GameView(arcade.View):
         self.gui_camera.viewport = (0, 0, width, height)
         self.gui_camera.projection = (0, width, 0, height)
 
+    def setup_widgets(self):
+        self.label = UILabel(text=f"HP: {self.player_hp}",
+                             font_name='Bahnschrift',
+                             font_size=40,
+                             text_color=arcade.color.WHITE
+                             )
+        self.anchor_layout.add(
+            child=self.label,
+            anchor_x="left",
+            anchor_y="bottom",
+            align_x=20,
+            align_y=140
+        )
+        self.label_2 = UILabel(text=f"BOMB: {self.count_bomb}",
+                               font_name='Bahnschrift',
+                               font_size=40,
+                               text_color=arcade.color.WHITE
+                               )
+        self.anchor_layout.add(
+            child=self.label_2,
+            anchor_x="left",
+            anchor_y="bottom",
+            align_x=20,
+            align_y=220
+        )
+
     def on_draw(self):
         self.clear()
 
         self.world_camera.use()
         self.wall_list.draw()
         self.chests_list.draw()
-        # self.exit_list.draw()
+        self.exit_list.draw()
         if self.close:
             self.doors_list.draw()
         self.player_list.draw()
@@ -519,25 +662,12 @@ class GameView(arcade.View):
             enemy.bullet_list.draw()
 
         self.gui_camera.use()
-        arcade.draw_text(
-            f"Player: ({int(self.player_sprite.center_x)}, {int(self.player_sprite.center_y)})",
-            10, 580,
-            arcade.color.WHITE, 16
-        )
-        arcade.draw_text(
-            f"Player hp: {self.player_hp}",
-            10, 280,
-            arcade.color.WHITE, 16
-        )
-        arcade.draw_text(
-            f"Bombs: {self.count_bomb}",
-            10, 400,
-            arcade.color.WHITE, 16
-        )
+        self.manager.draw()
+
         # хпбар
-        self.bar = max(0, self.player_hp / 100000)
-        arcade.draw_lbwh_rectangle_filled(9, 99, 402, 22, arcade.color.WHITE)
-        arcade.draw_lbwh_rectangle_filled(10, 100, 400 * self.bar, 20, arcade.color.RED)
+        self.bar = max(0, self.player_hp / 1000)
+        arcade.draw_lbwh_rectangle_filled(8, 58, 504, 54, arcade.color.BLACK)
+        arcade.draw_lbwh_rectangle_filled(10, 60, 500 * self.bar, 50, arcade.color.RED)
 
         # предметы
         self.keys.draw()
@@ -554,13 +684,13 @@ class GameView(arcade.View):
         self.boom_list.update(dt)
 
         if arcade.key.A in self.keys_pressed:
-            self.player_sprite.change_x = -self.player_speed * dt
+            self.player_sprite.change_x = -self.player_speed
         if arcade.key.D in self.keys_pressed:
-            self.player_sprite.change_x = self.player_speed * dt
+            self.player_sprite.change_x = self.player_speed
         if arcade.key.W in self.keys_pressed:
-            self.player_sprite.change_y = self.player_speed * dt
+            self.player_sprite.change_y = self.player_speed
         if arcade.key.S in self.keys_pressed:
-            self.player_sprite.change_y = -self.player_speed * dt
+            self.player_sprite.change_y = -self.player_speed
 
         if self.player_sprite.change_x != 0 and self.player_sprite.change_y != 0:
             self.player_sprite.change_x *= 0.7071
@@ -569,6 +699,9 @@ class GameView(arcade.View):
         if self.trail:
             self.trail.center_x = self.player_sprite.center_x
             self.trail.center_y = self.player_sprite.center_y
+
+        self.label.text = f"HP: {self.player_hp}"
+        self.label_2.text = f"BOMBS: {self.count_bomb}"
 
         # Обновляем эмиттеры и чистим «умершие»
         emitters_copy = self.emitters.copy()  # Защищаемся от мутаций списка
@@ -594,6 +727,7 @@ class GameView(arcade.View):
                     if enemy.health <= 0:
                         enemy.remove_from_sprite_lists()
                         self.emitters.append(make_explosion(enemy.center_x, enemy.center_y))
+                        self.enemy_dead.play(volume=0.5)
 
             # если попал в ящик
             if barrel_hit:
@@ -606,7 +740,7 @@ class GameView(arcade.View):
                                 self)
                     bar.remove_from_sprite_lists()
                     self.loot_list.append(loot)
-
+        # ключики
         if self.close:
             if arcade.check_for_collision_with_list(self.player_sprite, self.chests_list):
                 key = Key()
@@ -627,6 +761,20 @@ class GameView(arcade.View):
                 barrel.remove_from_sprite_lists()
                 self.loot_list.append(loot)
 
+        # вфход
+        if arcade.check_for_collision_with_list(self.player_sprite, self.exit_list):
+            self.level_number += 1
+            for loot in self.loot_list[:]:
+                loot.remove_from_sprite_lists()
+            for en in self.enemy_list[:]:
+                en.remove_from_sprite_lists()
+            for key in self.keys[:]:
+                key.remove_from_sprite_lists()
+            self.setup()
+
+        if self.player_hp <= 0:
+            self.game_over()
+
         self.physics_engine.update()
 
         # камера в мире
@@ -642,15 +790,20 @@ class GameView(arcade.View):
         cam_x = max(half_w, min(self.world_width - half_w, target_x))
         cam_y = max(half_h, min(self.world_height - half_h, target_y))
 
-        self.world_camera.position = arcade.math.lerp_2d(
+        new_pos = arcade.math.lerp_2d(
             self.world_camera.position,
             (cam_x, cam_y),
-            0.15  # Плавность
+            0.14
+        )
+
+        self.world_camera.position = (
+            math.floor(new_pos[0]),
+            math.floor(new_pos[1])
         )
 
         self.gui_camera.position = (
-            self.gui_camera.viewport_width / 2,
-            self.gui_camera.viewport_height / 2
+            self.window.width / 2,
+            self.window.height / 2
         )
 
     def on_mouse_press(self, x, y, button, mod):
@@ -666,6 +819,7 @@ class GameView(arcade.View):
                 world_x, world_y,
             )
             self.bullet_list.append(bullet)
+            self.shot_sound.play(volume=0.3)
         if self.count_bomb > 0:
             if button == arcade.MOUSE_BUTTON_RIGHT:
                 bomb = Bomb(
@@ -675,7 +829,7 @@ class GameView(arcade.View):
                     self
                 )
                 self.bomb_list.append(bomb)
-                # self.count_bomb -= 1
+                self.count_bomb -= 1
 
     def on_key_press(self, key, modifiers):
         if key == arcade.key.ESCAPE:
@@ -701,6 +855,56 @@ class GameView(arcade.View):
         if key in self.keys_pressed:
             self.keys_pressed.remove(key)
 
+    def on_show_view(self):
+        self.backgound_player = self.sound.play(loop=True, volume=0.5)
+
+    def on_hide_view(self):
+        arcade.stop_sound(self.backgound_player)
+
+    def game_over(self):
+        self.manager.disable()
+        game_over = GameOverView()
+        self.window.show_view(game_over)
+
+
+class GameOverView(arcade.View):
+    def __init__(self, score=0):
+        super().__init__()
+        self.score = score
+        arcade.set_background_color(arcade.color.BLACK)
+        my_style = {
+            "normal": arcade.gui.UIFlatButton.UIStyle(bg=arcade.color.RED),
+            "hover": arcade.gui.UIFlatButton.UIStyle(bg=arcade.color.DARK_RED),
+            "press": arcade.gui.UIFlatButton.UIStyle(bg=arcade.color.RED)
+        }
+        self.manager = UIManager()
+        self.manager.enable()
+
+        self.anchor_layout = UIAnchorLayout()
+        self.v_box = UIBoxLayout()
+
+        label = UILabel(text="ИГРА ОКОНЧЕНА", font_size=150, text_color=arcade.color.RED, font_name='Bahnschrift')
+        self.v_box.add(label)
+
+        restart_button = UIFlatButton(text="ПОПРОБОВАТЬ СНОВА", width=700, height=150, style=my_style)
+
+        self.v_box.add(restart_button)
+
+        restart_button.on_click = self.on_click_restart
+
+        self.anchor_layout.add(self.v_box)
+        self.manager.add(self.anchor_layout)
+
+    def on_click_restart(self, event):
+        self.manager.disable()
+        game_view = GameView()
+        game_view.setup()
+        self.window.show_view(game_view)
+
+    def on_draw(self):
+        self.clear()
+        self.manager.draw()
+
 
 class PauseView(arcade.View):
     def __init__(self, game_view):
@@ -725,7 +929,9 @@ class PauseView(arcade.View):
 def main():
     window = arcade.Window(width=1920,
                            height=1080,
-                           resizable=False
+                           resizable=False,
+                           fullscreen=True,
+                           antialiasing=True
                            )
     menu_view = MenuView()
     window.show_view(menu_view)
@@ -734,4 +940,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
