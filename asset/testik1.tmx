@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="40" height="40" tilewidth="70" tileheight="70" infinite="0" nextlayerid="8" nextobjectid="1">
+ <tileset firstgid="1" source="test.tsx"/>
+ <tileset firstgid="157" source="ооо.tsx"/>
+ <tileset firstgid="313" source="hjthrtjyt.tsx"/>
+ <layer id="1" name="walls" width="40" height="40">
+  <data encoding="base64" compression="zlib">
+   eJzllksSwyAMQ+l1c4wesGfqZMGGiYlEZBDtQjP54TwkHHK8SjnM9b4R8kzG+Cu+6NoTvlH2liU6nqWeV1c8aka23my+kfk48EXvmbX+Rufu0L8sH+O/Mssen5tW+sfUy+br9eUKPjQbBz7HfP+N71N4PsW6Qv1B/UM5lLXqvdNDtubT3Jh6Ld/qvaOV0j+11+r1twOf8huzCx/zz6PKHvlGjfqXxddec+OL8l3Bh9bagc9J2f6ps1Dtb8w/DdNDCB/aa2q+k03FlyF3PrQ/2IwU+/Ov883MN0N1bUe6G1fPv1DoGKI=
+  </data>
+ </layer>
+ <layer id="4" name="chests" width="40" height="40">
+  <data encoding="base64" compression="zlib">
+   eJztziEBAAAIA7DTvwFpSYDBYLYESwAAuOj6HgAAAACbAZ3uAJw=
+  </data>
+ </layer>
+ <layer id="7" name="exit" width="40" height="40">
+  <data encoding="base64" compression="zlib">
+   eJztzrENACAMBLFk/6FYjQIxAc0r2NL1V8VPVp8S3bfUR3/vkt8AAAAAgFk20DsMAQ==
+  </data>
+ </layer>
+ <layer id="6" name="barrel" width="40" height="40">
+  <data encoding="base64" compression="zlib">
+   eJzt1EkKwCAQBED9/z/yzuBNcjMgtloFc+9ZmFIA4F5PXZ0AxrnbMeb1j7mxg6Q7Tcpys7aHbyWZkS+tRzhV4k/ppeeDVV6EKw20
+  </data>
+ </layer>
+ <layer id="5" name="doors" width="40" height="40">
+  <data encoding="base64" compression="zlib">
+   eJzt1rENACAIAEHcfwSXpbewIVES7ib48iOYbq/fBXf6avQBAACvdP97fTXd+wDglAoCBX0=
+  </data>
+ </layer>
+ <layer id="3" name="enemy" width="40" height="40">
+  <data encoding="base64" compression="zlib">
+   eJztmFEOgCAMQ/Gu3v8MfhhisiCBrYMOeIlfDtaVAcaU1uS+voedSDrZkN6xaSz1IZNGZm0SVm2M+zfS+cdIr29Wn1vG/8VYclv3Prq/ZvVrztuTH7keO+zTmTUic3vXoZ2/dZyX/h16OFOqVXseyPe1eMY7fbQexBmNil8RzV3YM+/oOBSnN+p4rduuvkf6ZonM8ebl+ODPah57/JMYyQM0aRuf
+  </data>
+ </layer>
+ <layer id="2" name="collision" width="40" height="40" visible="0">
+  <data encoding="base64" compression="zlib">
+   eJztlksOwCAIRNsj9v6X6b7RMuAAY9NJ2CG8KB+v8zgucbOE+GScr+KLxkb5qvRkqebz5lK7v6dU+GYMVXyjHGhfdvevlbeazxOrey9Y+6LrfdF42XxvfYmeZ/Khb6PAx/L7+db8vHyMukLzR/cbi886w96/GXNy9idUsg6hdc+uGWaMDD7mjNmFj1mjq3yR/5VHK3yzWcKUQv2t5vXE2oFPyUZ8qmLyIfPC8h35oX0U9VHhy9CX+aI72Lsrv8pXoe5ZjNgN0/1vyw==
+  </data>
+ </layer>
+</map>
