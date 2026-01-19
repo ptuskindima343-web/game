@@ -770,6 +770,7 @@ class GameView(arcade.View):
                 en.remove_from_sprite_lists()
             for key in self.keys[:]:
                 key.remove_from_sprite_lists()
+            self.close = True
             self.setup()
 
         if self.player_hp <= 0:
