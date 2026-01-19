@@ -320,7 +320,7 @@ class Enemy(arcade.Sprite):
         self.bullet_list = arcade.SpriteList()
 
         self.timer = 0
-        self.interval = random.uniform(0.5, 4.0)
+        self.interval = random.uniform(0.5, 1.0)
         self.vision_timer = 0
         self.can_see = False
 
@@ -390,7 +390,7 @@ class Enemy(arcade.Sprite):
             if self.timer >= self.interval:
                 self.shoot()
                 self.timer = 0
-                self.interval = random.uniform(0.5, 4.0)
+                self.interval = random.uniform(0.5, 1.0)
         else:
             self.change_x = 0
             self.change_y = 0
