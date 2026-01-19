@@ -537,6 +537,7 @@ class GameView(arcade.View):
         self.fountain = None
         self.trail = None
         self.level_number = 1
+        self.kd = 0
         self.shot_sound = arcade.load_sound("gunfire_sfx.wav")
         self.enemy_dead = arcade.load_sound('explosion (1).wav')
         self.sound = arcade.load_sound('ruskerdax_-_savage_ambush.mp3')
@@ -683,6 +684,8 @@ class GameView(arcade.View):
         self.bomb_list.update(dt)
         self.boom_list.update(dt)
 
+        self.kd += dt
+
         if arcade.key.A in self.keys_pressed:
             self.player_sprite.change_x = -self.player_speed
         if arcade.key.D in self.keys_pressed:
@@ -813,14 +816,16 @@ class GameView(arcade.View):
         world_point = self.world_camera.unproject((x, y))
         world_x = world_point.x
         world_y = world_point.y
-        if button == arcade.MOUSE_BUTTON_LEFT:
-            bullet = Bullet(
-                self.player_sprite.center_x,
-                self.player_sprite.center_y,
-                world_x, world_y,
-            )
-            self.bullet_list.append(bullet)
-            self.shot_sound.play(volume=0.3)
+        if self.kd > 0.2:
+            if button == arcade.MOUSE_BUTTON_LEFT:
+                bullet = Bullet(
+                    self.player_sprite.center_x,
+                    self.player_sprite.center_y,
+                    world_x, world_y,
+                )
+                self.bullet_list.append(bullet)
+                self.kd = 0
+                self.shot_sound.play(volume=0.3)
         if self.count_bomb > 0:
             if button == arcade.MOUSE_BUTTON_RIGHT:
                 bomb = Bomb(
@@ -931,7 +936,6 @@ def main():
     window = arcade.Window(width=1920,
                            height=1080,
                            resizable=False,
-                           fullscreen=True,
                            antialiasing=True
                            )
     menu_view = MenuView()
