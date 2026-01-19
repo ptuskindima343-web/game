@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="40" height="40" tilewidth="70" tileheight="70" infinite="0" nextlayerid="7" nextobjectid="1">
+ <tileset firstgid="1" source="test.tsx"/>
+ <tileset firstgid="157" source="ооо.tsx"/>
+ <tileset firstgid="313" source="hjthrtjyt.tsx"/>
+ <layer id="1" name="walls" width="40" height="40">
+  <data encoding="base64" compression="zlib">
+   eJztlQsKxDAIRNvr7i3SA+YYe45FqBCCGuPWkMIMDP2Z5mlTcxwQBEEQBK3W59zfl8MUR+Jr6Zzz1cZ75unHzPCNYq2YbD6phq2t2q3kiz6P8NVBzqjf+H1VqQf4nucrp91Hy2Cu1tG9g3jJ1lyZeUg5RTky1sEb+b73GqRjb+2+FLeCr+fZhU/j2Z1vhq1M8lE89wvJEl/EnBP3Um9/GfXeLD6vvXxafcskewZf/bN2u/B5avk0H39Hb23AF/9/wfdevgxb+1a7d2nj+PoHcgmMBQ==
+  </data>
+ </layer>
+ <layer id="4" name="chests" width="40" height="40">
+  <data encoding="base64" compression="zlib">
+   eJztzkEBAAAEBLDTv4G0WvCwJVgCAPBH1/UAAAAA2DDL8gCc
+  </data>
+ </layer>
+ <layer id="6" name="barrel" width="40" height="40">
+  <data encoding="base64" compression="zlib">
+   eJzt1EEKwCAMBED7/3/0nSK95SKokFRmwPvuBmwNAAA+75OdALidf2buxEYZO1e77Wqeaj3+5PbtYr9qfeXbIx+Zxj3j44wOYfsPAg==
+  </data>
+ </layer>
+ <layer id="5" name="doors" width="40" height="40">
+  <data encoding="base64" compression="zlib">
+   eJztwzENAAAIA7DhXwJmkUC4eNqkCQAAAJ+69gAAwM0AUzkFfQ==
+  </data>
+ </layer>
+ <layer id="3" name="enemy" width="40" height="40">
+  <data encoding="base64" compression="zlib">
+   eJzt0KENACAMRUHYh7HYfwYsgkKDI9yZ/lS+UgAA7vW63/OPtaiRdjn6wR9acDmLWmmY80q/FmwA+NkAIlUEtQ==
+  </data>
+ </layer>
+ <layer id="2" name="collision" width="40" height="40" visible="0">
+  <data encoding="base64" compression="zlib">
+   eJztlkEOgDAIBOsz+iz//xnjrSGtUoFQ09mEeGBXRg+lpSCEEEL7qQ4qe/5Kpf0Ojc7DlpeZGb43793P4tPMeOrDB18vA58uO8r8gc97h/Xe83UnROxSy3+WPvjm+60Pvvl+6/Pkq+Lp4Yvi05xdWXxefq+7dTSflzL5ND74bLPhs83elW/lugDjCxeY
+  </data>
+ </layer>
+</map>
