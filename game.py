@@ -277,14 +277,19 @@ class Bullet(arcade.Sprite):
         if owner == "player":
             self.texture = arcade.load_texture("laser_2.png")
             self.scale = 0.2
+
+        elif owner == 'boss':
+            self.texture = arcade.load_texture("laser_1.png")
+            self.damage_boom = 200
+            self.scale = 0.7
         else:
             self.texture = arcade.load_texture("laser_1.png")
             self.scale = 0.4
 
         self.center_x = start_x
         self.center_y = start_y
-        self.speed = speed
         self.damage = damage
+        self.speed = speed
         self.owner = owner
 
         # Рассчитываем направление
@@ -305,11 +310,64 @@ class Bullet(arcade.Sprite):
         self.center_y += self.change_y * delta_time
 
 
+class Turrel(arcade.Sprite):
+    def __init__(self, game_view, player, x, y):
+        super().__init__()
+        self.game_view = game_view
+        self.health = 200
+        self.texture = arcade.load_texture("enemy.png")
+        self.scale = 1
+        self.player = player
+        self.center_x = x
+        self.center_y = y
+        self.bullet_list = arcade.SpriteList()
+
+        self.timer = 0
+        self.interval = random.uniform(0.5, 2.0)
+
+        self.physics_engine = arcade.PhysicsEngineSimple(
+            self,
+            [self.game_view.collision_list,
+             self.game_view.doors_list]
+        )
+
+    def shoot(self):
+        # Передаем координаты в Bullet
+        bullet = Bullet(
+            self.center_x,
+            self.center_y,
+            self.player.center_x, self.player.center_y,
+            owner='enemy'
+        )
+        self.bullet_list.append(bullet)
+
+    def update(self, delta_time):
+        self.bullet_list.update()
+
+        self.timer += delta_time
+
+        for bullet in self.bullet_list:
+            if arcade.check_for_collision_with_list(bullet, self.game_view.collision_list):
+                bullet.remove_from_sprite_lists()
+                continue
+
+            if arcade.check_for_collision(bullet, self.player):
+                bullet.remove_from_sprite_lists()
+                self.game_view.player_hp -= bullet.damage
+
+        if self.timer >= self.interval:
+            self.shoot()
+            self.timer = 0
+            self.interval = random.uniform(0.5, 1.0)
+
+        self.physics_engine.update()
+
+
 class Enemy(arcade.Sprite):
     def __init__(self, game_view, player, x, y):
         super().__init__()
         self.game_view = game_view
-        self.health = 100
+        self.health = 50
         self.texture = arcade.load_texture("ufoGreen.png")
         self.scale = 1.5
         self.pulse_direction = 10
@@ -320,7 +378,7 @@ class Enemy(arcade.Sprite):
         self.bullet_list = arcade.SpriteList()
 
         self.timer = 0
-        self.interval = random.uniform(0.5, 1.0)
+        self.interval = random.uniform(0.5, 2.0)
         self.vision_timer = 0
         self.can_see = False
 
@@ -371,6 +429,92 @@ class Enemy(arcade.Sprite):
         if self.vision_timer > 0.2:
             self.vision_timer = 0
             if distance < 500:  # Радиус обнаружения
+                # 2. Проверяем, нет ли стен между центром врага и центром игрока
+                self.can_see = arcade.has_line_of_sight(
+                    self.player.position,
+                    self.position,
+                    self.game_view.collision_list,
+                    check_resolution=16
+                )
+            else:
+                self.can_see = False
+
+        if self.can_see:
+            # Двигается к игроку
+            if distance > 10:
+                self.change_x = (dx / distance) * self.speed
+                self.change_y = (dy / distance) * self.speed
+
+            if self.timer >= self.interval:
+                self.shoot()
+                self.timer = 0
+                self.interval = random.uniform(0.5, 1.0)
+        else:
+            self.change_x = 0
+            self.change_y = 0
+
+        self.physics_engine.update()
+
+
+class Boss(arcade.Sprite):
+    def __init__(self, game_view, player, x, y):
+        super().__init__()
+        self.game_view = game_view
+        self.health = 1000
+        self.texture = arcade.load_texture("ufoGreen.png")
+        self.scale = 3
+        self.speed = 1.5
+        self.player = player
+        self.center_x = x
+        self.center_y = y
+        self.bullet_list = arcade.SpriteList()
+
+        self.timer = 0
+        self.interval = random.uniform(0.5, 1.3)
+        self.vision_timer = 0
+        self.can_see = False
+
+        self.physics_engine = arcade.PhysicsEngineSimple(
+            self,
+            [self.game_view.collision_list,
+             self.game_view.doors_list]
+        )
+
+    def shoot(self):
+        # Передаем координаты в Bullet
+        bullet = Bullet(
+            self.center_x,
+            self.center_y,
+            self.player.center_x, self.player.center_y,
+            owner='boss'
+        )
+        self.bullet_list.append(bullet)
+
+    def update(self, delta_time):
+        self.bullet_list.update()
+
+        self.timer += delta_time
+        self.vision_timer += delta_time
+
+        for bullet in self.bullet_list:
+            if arcade.check_for_collision_with_list(bullet, self.game_view.collision_list):
+                boom = Booms(bullet.center_x, bullet.center_y, self.game_view, bullet, owner='boss')
+                self.game_view.boom_list.append(boom)
+                bullet.remove_from_sprite_lists()
+                continue
+
+            if arcade.check_for_collision(bullet, self.player):
+                bullet.remove_from_sprite_lists()
+                self.game_view.player_hp -= bullet.damage
+
+        dx = self.player.center_x - self.center_x
+        dy = self.player.center_y - self.center_y
+        distance = math.sqrt(dx * dx + dy * dy)
+
+        # --- ЛОГИКА ЗРЕНИЯ ---
+        if self.vision_timer > 0.2:
+            self.vision_timer = 0
+            if distance < 1000:  # Радиус обнаружения
                 # 2. Проверяем, нет ли стен между центром врага и центром игрока
                 self.can_see = arcade.has_line_of_sight(
                     self.player.position,
@@ -498,7 +642,7 @@ class Bomb(arcade.Sprite):
 
 
 class Booms(arcade.Sprite):
-    def __init__(self, x, y, game, bomb):
+    def __init__(self, x, y, game, bomb, owner='friend'):
         super().__init__()
         self.texture = arcade.make_soft_circle_texture(64, arcade.color.NEON_GREEN)
         self.center_x = x
@@ -508,20 +652,30 @@ class Booms(arcade.Sprite):
         self.bomb = bomb
         self.sound = arcade.load_sound("8bit_bomb_explosion.wav")
         self.sound.play()
+        self.owner = owner
 
     def update(self, delta_time):
-        self.width += 18
-        self.height += 18
+        self.width += 17
+        self.height += 17
         self.alpha -= 10
-        self.game_w.emitters.append(make_smoke_puff(self.center_x, self.center_y))
-        hit_list_boom = arcade.check_for_collision_with_list(self, self.game_w.enemy_list)
-        if hit_list_boom:
-            for en in hit_list_boom:
-                en.health -= self.bomb.damage
-                if en.health <= 0:
-                    en.kill()
-        if self.width > 400 or self.alpha <= 0:
-            self.kill()
+        if self.owner == 'friend':
+            hit_list_boom = arcade.check_for_collision_with_list(self, self.game_w.enemy_list)
+            self.game_w.emitters.append(make_smoke_puff(self.center_x, self.center_y))
+            if hit_list_boom:
+                for en in hit_list_boom:
+                    en.health -= self.bomb.damage
+                    if en.health <= 0:
+                        en.kill()
+            if self.width > 400 or self.alpha <= 0:
+                self.kill()
+        else:
+            hit_list_boom = arcade.check_for_collision_with_list(self, self.game_w.player_list)
+            if hit_list_boom:
+                for pl in hit_list_boom:
+                    self.game_w.player_hp -= self.bomb.damage_boom
+                    self.kill()
+            if self.width > 200 or self.alpha <= 0:
+                self.kill()
 
 
 class GameView(arcade.View):
@@ -536,8 +690,8 @@ class GameView(arcade.View):
         self.emitters = []
         self.fountain = None
         self.trail = None
-        self.level_number = 1
         self.kd = 0
+        self.level_number = 1
         self.shot_sound = arcade.load_sound("gunfire_sfx.wav")
         self.enemy_dead = arcade.load_sound('explosion (1).wav')
         self.sound = arcade.load_sound('ruskerdax_-_savage_ambush.mp3')
@@ -562,6 +716,8 @@ class GameView(arcade.View):
         self.loot_list = arcade.SpriteList()
         self.bomb_list = arcade.SpriteList()
         self.boom_list = arcade.SpriteList()
+        self.boss_list = arcade.SpriteList()
+        self.turrel_list = arcade.SpriteList()
 
         self.player_sprite = arcade.Sprite("p1_stand.png",
                                            0.5)
@@ -581,6 +737,8 @@ class GameView(arcade.View):
         self.doors_list = tile_map.sprite_lists["doors"]
         self.barrel_list = tile_map.sprite_lists["barrel"]
         self.exit_list = tile_map.sprite_lists["exit"]
+        boss_list = tile_map.sprite_lists["boss"]
+        turrel_list = tile_map.sprite_lists["turrel"]
         self.collision_list = tile_map.sprite_lists["collision"]
         self.collision_list.use_spatial_hashing = True
         self.collision_list.enable_spatial_hashing()
@@ -595,7 +753,7 @@ class GameView(arcade.View):
         # --- Физический движок ---
         # Используем PhysicsEngineSimple, который знаем и любим
         self.physics_engine = arcade.PhysicsEngineSimple(
-            self.player_sprite, [self.collision_list, self.doors_list]
+            self.player_sprite, [self.collision_list, self.doors_list, self.boss_list]
         )
 
         for enemy_sprite in enemy_list_0[:]:
@@ -607,6 +765,26 @@ class GameView(arcade.View):
             )
             enemy_sprite.remove_from_sprite_lists()
             self.enemy_list.append(enemy)
+
+        for boss_sprite in boss_list[:]:
+            boss = Boss(
+                game_view=self,
+                player=self.player_sprite,
+                x=boss_sprite.center_x,
+                y=boss_sprite.center_y
+            )
+            boss_sprite.remove_from_sprite_lists()
+            self.boss_list.append(boss)
+
+        for turrel_sprite in turrel_list[:]:
+            turrel = Turrel(
+                game_view=self,
+                player=self.player_sprite,
+                x=turrel_sprite.center_x,
+                y=turrel_sprite.center_y
+            )
+            turrel_sprite.remove_from_sprite_lists()
+            self.turrel_list.append(turrel)
 
     def on_resize(self, width: int, height: int):
         self.world_camera.viewport = (0, 0, width, height)
@@ -650,6 +828,8 @@ class GameView(arcade.View):
             self.doors_list.draw()
         self.player_list.draw()
         self.enemy_list.draw()
+        self.boss_list.draw()
+        self.turrel_list.draw()
         self.bullet_list.draw()
         self.loot_list.draw()
         self.barrel_list.draw()
@@ -661,6 +841,12 @@ class GameView(arcade.View):
 
         for enemy in self.enemy_list:
             enemy.bullet_list.draw()
+
+        for boss in self.boss_list:
+            boss.bullet_list.draw()
+
+        for turrel in self.turrel_list:
+            turrel.bullet_list.draw()
 
         self.gui_camera.use()
         self.manager.draw()
@@ -683,8 +869,8 @@ class GameView(arcade.View):
         self.loot_list.update(dt)
         self.bomb_list.update(dt)
         self.boom_list.update(dt)
-
-        self.kd += dt
+        self.boss_list.update(dt)
+        self.turrel_list.update(dt)
 
         if arcade.key.A in self.keys_pressed:
             self.player_sprite.change_x = -self.player_speed
@@ -703,6 +889,8 @@ class GameView(arcade.View):
             self.trail.center_x = self.player_sprite.center_x
             self.trail.center_y = self.player_sprite.center_y
 
+        self.kd += dt
+
         self.label.text = f"HP: {self.player_hp}"
         self.label_2.text = f"BOMBS: {self.count_bomb}"
 
@@ -715,7 +903,8 @@ class GameView(arcade.View):
                 self.emitters.remove(e)
 
         for bullet in self.bullet_list:
-            enemies_hit_list = arcade.check_for_collision_with_list(bullet, self.enemy_list)
+            enemies_hit_list = arcade.check_for_collision_with_lists(bullet, [self.enemy_list, self.boss_list,
+                                                                              self.turrel_list])
             barrel_hit = arcade.check_for_collision_with_list(bullet, self.barrel_list)
 
             if arcade.check_for_collision_with_lists(bullet, [self.collision_list, self.doors_list]):
@@ -773,6 +962,10 @@ class GameView(arcade.View):
                 en.remove_from_sprite_lists()
             for key in self.keys[:]:
                 key.remove_from_sprite_lists()
+            for tur in self.turrel_list[:]:
+                tur.remove_from_sprite_lists()
+            for boss in self.boss_list[:]:
+                boss.remove_from_sprite_lists()
             self.close = True
             self.setup()
 
@@ -945,5 +1138,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
