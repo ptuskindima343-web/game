@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="20" height="20" tilewidth="70" tileheight="70" infinite="0" nextlayerid="10" nextobjectid="1">
+ <tileset firstgid="1" source="hjthrtjyt.tsx"/>
+ <layer id="9" name="walls" width="20" height="20">
+  <data encoding="base64" compression="zlib">
+   eJwzYmBgMKIy9qISJsY8IxzsUfNQzSM1jrCpH4j4Jdc8evl3sMTvUDWPnPglpewZbOXVYDCPmhgA4TpoMQ==
+  </data>
+ </layer>
+ <layer id="5" name="doors" width="20" height="20">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFo2AUjILhAZLR8CigLQAANlYBjQ==
+  </data>
+ </layer>
+ <layer id="6" name="barrel" width="20" height="20">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFo2AUjIJRkIeEqaF+sJtHDQAAEXoHvQ==
+  </data>
+ </layer>
+ <layer id="4" name="chests" width="20" height="20">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFo2AUjIJRMJhA0kA7gEgAAEaQAGM=
+  </data>
+ </layer>
+ <layer id="7" name="exit" width="20" height="20">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFo2AUjIJRMApIBwAGQAAB
+  </data>
+ </layer>
+ <layer id="8" name="turrel" width="20" height="20">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgawHeA9I6CUTASwWh+GwXEAACL5AE1
+  </data>
+ </layer>
+ <layer id="2" name="enemy" width="20" height="20">
+  <data encoding="base64" compression="zlib">
+   eJxjYBj6QAeKRwoYDP7VwcEmVz21zaMnGAzxQU8w0vw7CnADAFxWAsE=
+  </data>
+ </layer>
+ <layer id="3" name="boss" width="20" height="20">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFo2BwA46BdsAoGAWjACsAACMgAAk=
+  </data>
+ </layer>
+ <layer id="1" name="collision" width="20" height="20" visible="0">
+  <data encoding="base64" compression="zlib">
+   eJyTZGBgkKQyphYgxjxJHOxR81DNIzWOsKkfiPgl1zx6+XewxO9QNY8UQE7ZM9jKq8FgHjUxAPXgC+s=
+  </data>
+ </layer>
+</map>
